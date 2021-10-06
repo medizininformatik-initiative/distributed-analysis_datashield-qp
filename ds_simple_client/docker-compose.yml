@@ -1,0 +1,8 @@
+services:
+  datashield:
+    container_name: ds_simple_client
+    build: .
+    tty: true
+    volumes:
+      - ../cert/ca_cert/ds_develop_ca.crt:/usr/local/share/ca-certificates/ds_develop_ca.crt
+      - ./testscripts:/testscripts

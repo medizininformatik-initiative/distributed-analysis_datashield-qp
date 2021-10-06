@@ -1,0 +1,19 @@
+version: '3.5'
+
+services:
+  nginx_queue:
+    container_name: nginx_queue
+    restart: unless-stopped
+    build:
+      context: ..
+      dockerfile: Dockerfile.nginx.queue
+    ports:
+      - "443:8443"
+    environment:
+      - ALLOWED_IPS=${ALLOWED_IPS}
+    volumes:
+      - ../../cert/do_cert/queuenginx.crt:/etc/nginx/conf.d/queuecert.pem
+      - ../../cert/do_cert/queuenginx.key:/etc/nginx/conf.d/queuekey.pem
+      - ../nginx/:/etc/nginx/conf.d
+      - ../nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    command: bash -c "cd /etc/nginx/conf.d/ && ./q_nginx_start.sh"

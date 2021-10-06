@@ -1,0 +1,9 @@
+# this file lets you configure your ds analysis server
+
+### add your configuration information here
+
+export QP_VERSION_TAG='v0.5.0' # version of qp and ds system - e.g. v0.0.1 - default is empty => master = newest
+export QP_DOCKER_REGISTRY_PREFIX='docker.miracum.org/datashield_miracum' # registry host:port  e.g. 'testregistry.de:5043'
+export QP_DOCKER_REGISTRY_USER='' # user e.g. 'test'
+export QP_DOCKER_REGISTRY_PW=''  #  password, e.g. 'test123!'
+export RSTUDIO_USERS='datashield,password' # create RSTUDIO users ";" separated e.g. <user,pw;user,pw>

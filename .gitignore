@@ -1,0 +1,12 @@
+/.vscode
+opal_poll.config
+queue.config
+/build_from_images/opal_poll.config
+/build_from_images/opal_poll/poll_logging
+/build_from_images/opal_poll/ds_data
+/build_from_images/opal_poll_install.zip
+/build_from_images/queue_install.zip
+/cert/do_cert/*
+!/cert/do_cert/.gitkeep
+/cert/ca_cert/*
+!/cert/ca_cert/.gitkeep

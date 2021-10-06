@@ -1,0 +1,15 @@
+FROM nginx:1.17
+
+ADD nginx/ /etc/nginx/conf.d
+ADD nginx/nginx.conf /etc/nginx/nginx.conf:ro
+ADD nginx/dhparam.pem /etc/nginx/dhparam.pem
+
+RUN touch /var/run/nginx.pid && \
+  chown -R nginx:nginx /var/run/nginx.pid && \
+  chown -R nginx:nginx /var/cache/nginx && \
+  chown -R nginx:nginx /var/log/nginx && \
+  chown -R nginx:nginx /etc/nginx/conf.d/queue_allow_ips.conf
+
+USER nginx
+
+CMD bash -c 'cd /etc/nginx/conf.d/ && ./q_nginx_start.sh'

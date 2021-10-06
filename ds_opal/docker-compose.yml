@@ -1,0 +1,41 @@
+version: '3.2'
+services:
+  opal:
+    container_name: datashield_opal
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+    - "8443:8443"
+    - "8880:8080"
+    environment:
+    - JAVA_OPTS=-Xms1G -Xmx8G -XX:+UseG1GC
+    - OPAL_ADMINISTRATOR_PASSWORD=develop
+    - MONGODBHOST=datashield_mongo
+    - INITTESTDATA=true
+    - DS_VERSION=${DS_VERSION:-6.1.1}
+    - DS_PRIVACY_LEVEL=${DS_PRIVACY_LEVEL:-5}
+    - ROCK_HOSTS=rock1:8085,rock2:8085
+    volumes:
+    - ./ds_data/auth:/auth
+    - ../cert/do_cert/opal.key:/opt/opal/auth/opalkey.pem
+    - ../cert/do_cert/opal.crt:/opt/opal/auth/opalcert.pem
+  mongo:
+    container_name: datashield_mongo
+    image: mongo
+    volumes:
+    - opal-db-data:/data/db
+  rock1:
+    image: datashield/rock-base:latest
+    environment:
+      - ROCK_ID=default-1
+      - ROCK_CLUSTER=default
+  rock2:
+    image: datashield/rock-base:latest
+    environment:
+      - ROCK_ID=default-2
+      - ROCK_CLUSTER=default
+
+volumes:
+  opal-db-data:
+  opal-files:

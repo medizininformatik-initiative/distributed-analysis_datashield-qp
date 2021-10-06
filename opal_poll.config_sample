@@ -1,0 +1,17 @@
+# this file lets you install opal and the poll service
+
+### add your configuration information here
+
+export QP_VERSION_TAG='v0.5.0' # version of qp and ds system - e.g. v0.0.1 - default is empty => master = newest
+export OPAL_SERVER_IP='127.0.0.1' # Ip address of this server - default is localhost
+export QP_DOCKER_REGISTRY_PREFIX='docker.miracum.org/datashield_miracum' # registry host:port  e.g. 'testregistry.de:5043'
+export QP_DOCKER_REGISTRY_USER='' # user e.g. 'test'
+export QP_DOCKER_REGISTRY_PW=''  #  password, e.g. 'test123!'
+export OPAL_ADMIN_PASS='password' # please change this password to a save password
+export R_SERVER_HOST='datashield_rserver'
+export OPAL_MONGODB_HOST='datashield_mongo'
+
+export POLL_QUEUE_SERVER='' # e.g. '-q 123.12.12.12:443' , queue server host and port(usually 443)
+export POLL_OPAL_SERVER='-o datashield_opal:8443'  # e.g. '-o 123.12.12.12:443' , opal server host and port, default is set to datashield_opal:8443, which is correct for a pure docker setup
+export POLL_THREADS='-t 2'      # e.g. '-t 5' number of poll threads defaults to 2
+export CHECK_SERVER_CERT='' # e.g. '-c' activate checking sever certificate

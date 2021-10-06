@@ -1,0 +1,7 @@
+/ds_data/auth
+/ds_data/mongo_data
+/ds_data/opal
+/ds_server_funcs/dsBase
+/ds_server_funcs/dsModelling
+/ds_server_funcs/dsTutorial
+.Rproj.user

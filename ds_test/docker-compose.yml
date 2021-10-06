@@ -1,0 +1,10 @@
+version: '3.2'
+services:
+  ds_test:
+    container_name: ds_test
+    build: .
+    volumes:
+      - ./testscript:/testscript
+    environment:
+      - QUEUE_HOST=${QUEUE_HOST}
+    command: bash -c "tail -f /dev/null" 
