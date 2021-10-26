@@ -51,12 +51,6 @@ commonName		= supplied
  O                      = nginx_queue
  OU                     = nginx_queue
 
-
-[ v3_ca ] 
-basicConstraints = CA:TRUE 
-subjectKeyIdentifier = hash 
-authorityKeyIdentifier = keyid:always,issuer:always 
-
 [ req_ext ]
 subjectAltName = @alt_names
 

@@ -42,21 +42,12 @@ commonName		= supplied
  default_bits           = 4096
  distinguished_name     = req_distinguished_name
  prompt                 = no
- req_extensions = req_ext
 
 [ req_distinguished_name ]
  C                      = DE
  CN                     = datashield_opal
  O                      = datashield_opal
  OU                     = datashield_opal
-
-[ v3_ca ] 
-basicConstraints = CA:TRUE 
-subjectKeyIdentifier = hash 
-authorityKeyIdentifier = keyid:always,issuer:always
-
-[req_ext]
-subjectAltName = @alt_names
 
 [alt_names]
 DNS.1 = datashield_opal

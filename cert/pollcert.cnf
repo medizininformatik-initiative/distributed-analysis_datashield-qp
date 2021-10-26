@@ -50,11 +50,6 @@ commonName		= supplied
  O                      = poll_server
  OU                     = poll_server
 
-[ v3_ca ] 
-basicConstraints = CA:TRUE 
-subjectKeyIdentifier = hash 
-authorityKeyIdentifier = keyid:always,issuer:always 
-
 [req_ext]
 subjectAltName = @alt_names
 

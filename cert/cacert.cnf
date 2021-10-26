@@ -41,13 +41,9 @@ commonName		= supplied
  default_bits           = 2048
  distinguished_name     = req_distinguished_name
  prompt                 = no
+ 
 [ req_distinguished_name ]
  C                      = DE
  CN                     = ds_develop CA
  O                      = ds_develop
  OU                     = ds_develop CA
-
-[ v3_ca ] 
-basicConstraints = CA:TRUE 
-subjectKeyIdentifier = hash 
-authorityKeyIdentifier = keyid:always,issuer:always 

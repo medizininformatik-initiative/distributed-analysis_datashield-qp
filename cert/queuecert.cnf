@@ -50,11 +50,6 @@ commonName		= supplied
  O                      = queue_server
  OU                     = queue_server
 
-[ v3_ca ] 
-basicConstraints = CA:TRUE 
-subjectKeyIdentifier = hash 
-authorityKeyIdentifier = keyid:always,issuer:always 
-
 [req_ext]
 subjectAltName = @alt_names
 
