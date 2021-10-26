@@ -14,7 +14,7 @@ This README guides you through how you can participate in the development of thi
 
 ## initialise your develop environment and start all neccessary docker containers
 
-To initialise your development environment you can use the `initialise_developer.sh` provided in this repository.
+To initialise your development environment you can use the `initialise_develop.sh` provided in this repository.
 
 This
 1. Creates a certificate authority (CA) and ssl certificates for each component
