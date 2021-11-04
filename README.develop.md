@@ -47,7 +47,7 @@ If you are not familiar with Opal and DataSHIELD, please refer to the official d
 ### Start your Queue Server
 
 `docker exec -it queue_server bash`
-`python3 ds_queue.py -a 0.0.0.0 -p 443 -r localhost:8843 -d proxyLog.logs -l 10 -i -t 10:10`
+`python3 ds_queue.py -a 0.0.0.0 -p 443 -d proxyLog.logs -l 10 -i -t 10:10`
 
 The files of the queue server are mounted to the queue_server docker container:
 => When you change files in the ds_queue folder of this repository, stop your queue application inside the docker container and then start it again, 
