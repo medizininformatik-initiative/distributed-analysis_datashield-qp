@@ -47,7 +47,7 @@ If you are not familiar with Opal and DataSHIELD, please refer to the official d
 ### Start your Queue Server
 
 `docker exec -it queue_server bash`
-`python3 ds_queue.py -a 0.0.0.0 -p 443 -d proxyLog.logs -l 10 -i -t 10:10`
+`python3 ds_queue.py -a 0.0.0.0 -p 443 -i -t 10:10 -l 10`
 
 The files of the queue server are mounted to the queue_server docker container:
 => When you change files in the ds_queue folder of this repository, stop your queue application inside the docker container and then start it again, 
@@ -56,7 +56,7 @@ the queue application will run with your changes
 ### Start your Poll Application
 
 `docker exec -it poll_server bash`
-`python3 ds_poll.py -q queue_server:443 -o datashield_opal:8080 -l 10`
+`python3 ds_poll.py -q queue_server:443 -o datashield_opal:8080 -l 10 -t 2`
 
 The files of the poll server are mounted to the poll_server docker container:
 => When you change files in the ds_poll folder of this repository, stop your poll application inside the docker container and then start it again, 
