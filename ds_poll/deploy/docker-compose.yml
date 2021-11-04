@@ -14,5 +14,5 @@ services:
         volumes:
             - ../../cert/ca_cert/ds_develop_ca.crt:/usr/local/share/ca-certificates/ds_develop_ca.crt
             - ..:/home/dspoll/ds_poll
-        #entrypoint: bash -c "tail -f /dev/null"
+        entrypoint: bash -c "tail -f /dev/null"
 

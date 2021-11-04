@@ -6,9 +6,12 @@ library(DSOpal)
 builder <- DSI::newDSLoginBuilder()
 
 #builder$append(server="server1", url='http://datashield_opal:8080',
-#               user="administrator", password="password")
+#               user="administrator", password="develop")
 
-builder$append(server="server1", url='https://nginx_queue:8443',
+#builder$append(server="server1", url='https://nginx_queue:8443',
+#               user="administrator", password="develop")
+
+builder$append(server="server1", url='http://queue_server:443',
                user="administrator", password="develop")
 
 logindata <- builder$build()
@@ -23,5 +26,4 @@ datashield.assign.table(connections, symbol = "D",
 
 mean <- ds.mean(x = 'D$LAB_HDL', type = "combine", datasources = connections)
 print(mean)
-
 print(datashield.errors())

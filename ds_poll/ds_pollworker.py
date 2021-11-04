@@ -10,10 +10,10 @@
 
 import io
 import http.client
-import ssl
-import sys
 from ds_http.ds_http import HTTPRequest, HTTPResponse
 import requests
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.SubjectAltNameWarning)
 
 CA_PATH = '/etc/ssl/certs'
 
@@ -59,7 +59,6 @@ class Pollworker():
 
         try:
             url = self.pollstate.protocol + "://" + str(self.q_host) + ":" + str(self.q_port)
-            print(url)
             res = requests.get(url + "/?getQueuedRequest=True")
 
         except requests.exceptions.ConnectionError as e:

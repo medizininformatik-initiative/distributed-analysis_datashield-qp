@@ -8,18 +8,13 @@
 """
 import queue
 import socketserver
-import http.server
 import threading
-import http.client
 import time
 import ssl
 import uuid
 import os
-import logging
-import socket
 import json
-
-from ds_http.ds_http import HTTPUtil, HTTPRequest, HTTPResponse
+from ds_http.ds_http import HTTPRequest, HTTPResponse
 from logger import Logger
 
 KEY_FILE = "./cert/queuekey.pem"
@@ -32,7 +27,6 @@ class ProxyHandler(socketserver.StreamRequestHandler):
     def __init__(self, request, client_address, server):
 
         self.peer = True
-        self.keepalive = False
         self.target = None
 
         # Just for debugging
@@ -44,12 +38,6 @@ class ProxyHandler(socketserver.StreamRequestHandler):
     def handle(self):
 
         global proxystate
-
-        if self.keepalive:
-            if self.peer:
-                HTTPSUtil.wait_read(self.request)
-            else:
-                HTTPUtil.wait_read(self.request)
 
         try:
             req = HTTPRequest.build(self.rfile)
@@ -71,34 +59,8 @@ class ProxyHandler(socketserver.StreamRequestHandler):
         if proxystate.allowed_ips and orig_ip not in proxystate.allowed_ips:
             print("rejecting ip : " + str(orig_ip))
             return
-        
-        if req.isKeepAlive():
-            self.keepalive = True
-        else:
-            self.keepalive = False
 
-        if proxystate.activateQp:
-            self.handleQpRequest(req)
-        else:
-            host, port = ProxyState.getTargetHost(req)
-            self.execRequest(host, port, req)
-
-    def doRequest(self, conn, method, path, params, headers):
-        global proxystate
-        try:
-            self._request(conn, method, path, params, headers)
-            return True
-        except IOError as e:
-            proxystate.log.error("%s: %s:%d" % (e.__str__(), conn.host, conn.port))
-            return False
-
-    def execRequest(self, host, port, req):
-        conn = self.createConnection(host, port)
-        if not self.doRequest(conn, req.getMethod(), req.getPath(), req.getBody(), req.headers):
-            return ''
-
-        res = self._getresponse(conn)
-        self.sendResponse(res.serialize())
+        self.handleQpRequest(req)
 
     def handleQpRequest(self, req):
 
@@ -112,7 +74,7 @@ class ProxyHandler(socketserver.StreamRequestHandler):
             self.resetQueue()
         elif 'ping' in queryParams:
             self.ping()
-        elif 'queueSizes'in queryParams:
+        elif 'queueSizes' in queryParams:
             self.get_q_sizes()
         else:
             self.execQueueRequest(req)
@@ -179,7 +141,7 @@ class ProxyHandler(socketserver.StreamRequestHandler):
     def resetQueue(self):
         proxystate.resQueueList = {}
         proxystate.reqQueue.queue.clear()
-        
+
         res = HTTPResponse('HTTP/1.1', 200, 'OK', body="queue reset \n")
         self.sendResponse(res.serialize())
 
@@ -195,75 +157,9 @@ class ProxyHandler(socketserver.StreamRequestHandler):
         res = HTTPResponse('HTTP/1.1', 200, 'OK', body=json.dumps(queue_sizes))
         self.sendResponse(res.serialize())
 
-    def createConnection(self, host, port):
-        global proxystate
-
-        if self.target and self._host == host:
-            return self.target
-
-        try:
-            if self.peer:
-                defContext = ssl._create_unverified_context()
-                conn = http.client.HTTPSConnection(host, port, context=defContext)
-            else:
-                # HTTP Connection
-                conn = http.client.HTTPConnection(host, port)
-        except http.client.HTTPException as e:
-            proxystate.log.debug(e.__str__())
-
-        #  presistend connection? , add the socket to the dictionary
-        if self.keepalive:
-            self.target = conn
-
-        self._host = host
-        self._port = port
-
-        return conn
-
     def sendResponse(self, res):
         self.wfile.write(res.encode('latin-1'))
         self.wfile.flush()  # see if flushing improves performance
-
-    def _request(self, conn, method, path, params, headers):
-
-        conn.putrequest(method, path, skip_host=True, skip_accept_encoding=True)
-
-        for header, v in headers.items():
-            if header.lower() == 'content-length':
-                conn.putheader(header, str(len(params)))
-            else:
-                for i in v:
-                    conn.putheader(header, i)
-
-        conn.endheaders()
-
-        if len(params) > 0:
-            conn.send(params.encode('latin-1'))
-
-    def _getresponse(self, conn):
-        try:
-            res = conn.getresponse()
-        except http.client.HTTPException as e:
-            proxystate.log.debug(e.__str__() + ": Error getting response")
-            return None
-
-        body = res.read().decode('latin-1')
-        if res.version == 10:
-            proto = "HTTP/1.0"
-        else:
-            proto = "HTTP/1.1"
-
-        code = res.status
-        msg = res.reason
-        headers = res.getheaders()
-        headers = dict((x, y) for x, y in headers)
-        res = HTTPResponse(proto, code, msg, headers, body)
-
-        if 'Transfer-Encoding' in headers.keys():
-            res.removeHeader('Transfer-Encoding')
-            res.addHeader('Content-Length', str(len(body)))
-
-        return res
 
 
 class ThreadedHTTPProxyServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
@@ -296,7 +192,7 @@ class ProxyServer():
 
         server_thread.setDaemon(True)
         proxystate.log.info("Starting queue server, with configurations:" + 
-                            " port: %d, loglevel: %s, req_timeout: %s, res_timeout: %s, allowed_ips: %s, " 
+                            " port: %d, loglevel: %s, req_timeout: %s, res_timeout: %s, allowed_ips: %s, "
                             % (self.proxyServer_port, proxystate.log.get_level(), proxystate.requestTimeout,
                                proxystate.responseTimeout, proxystate.allowed_ips))
 

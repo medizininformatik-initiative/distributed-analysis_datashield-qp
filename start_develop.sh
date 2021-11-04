@@ -7,7 +7,7 @@ cd ds_queue/deploy
 docker-compose -p $COMPOSE_PROJECT up -d
 
 printf "Starting NGINX for Queue \n"
-docker-compose -p $COMPOSE_PROJECT -f docker-compose.nginx.q.yml up -d
+#docker-compose -p $COMPOSE_PROJECT -f docker-compose.nginx.q.yml up -d
 
 printf "Starting Opal \n"
 cd ../../ds_opal

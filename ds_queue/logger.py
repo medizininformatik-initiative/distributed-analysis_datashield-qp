@@ -13,9 +13,8 @@ import threading
 import logging
 import json
 from ds_http.ds_http import HTTPRequest, HTTPResponse
-from time import gmtime, localtime, strftime
+from time import localtime, strftime
 import base64
-import sys
 
 COLOR_RED = 31
 COLOR_GREEN = 32
@@ -39,9 +38,9 @@ class Logger:
         logging.basicConfig(level=logging.INFO)
         self.logger = logging.getLogger('ql')
         self.logger.setLevel(logging.INFO)
-        #handler = logging.StreamHandler(sys.stdout)
-        #handler.setLevel(logging.DEBUG)
-        #self.logger.addHandler(handler)
+        # handler = logging.StreamHandler(sys.stdout)
+        # handler.setLevel(logging.DEBUG)
+        # self.logger.addHandler(handler)
 
     def getLogfileName(self):
         time = strftime("%Y-%m-%d", localtime())
