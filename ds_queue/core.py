@@ -57,7 +57,7 @@ class ProxyHandler(socketserver.StreamRequestHandler):
             orig_ip = orig_ip[0]
 
         if proxystate.allowed_ips and orig_ip not in proxystate.allowed_ips:
-            print("rejecting ip : " + str(orig_ip))
+            proxystate.log.error("rejecting ip : " + str(orig_ip))
             return
 
         self.handleQpRequest(req)
