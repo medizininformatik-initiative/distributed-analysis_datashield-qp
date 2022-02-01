@@ -54,8 +54,8 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/ds_opal
           tags: |
-            ghcr.io/${{ github.repository }}/ds_opal:latest,
-            ghcr.io/${{ github.repository }}/ds_opal:current
+            latest,
+            current
 
       - name: Build and push
         id: build-and-push
