@@ -54,7 +54,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/ds_opal
           tags: |
-            latest,
+            latest
             current
 
       - name: Build and push
