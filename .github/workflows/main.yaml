@@ -15,7 +15,6 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
 
     build_ds_poll:
-      runs-on: ubuntu-20.04
       uses: ./.github/workflows/build.yaml
       with:
         package: ds_poll
@@ -23,7 +22,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
     build_ds_queue:
-      runs-on: ubuntu-20.04
       uses: ./.github/workflows/build.yaml
       with:
         package: ds_queue
@@ -31,7 +29,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
     build_ds_simple_client:
-      runs-on: ubuntu-20.04
       uses: ./.github/workflows/build.yaml
       with:
         package: ds_simple_client
@@ -39,7 +36,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
     build_ds_test:
-      runs-on: ubuntu-20.04
       uses: ./.github/workflows/build.yaml
       with:
         package: ds_test
