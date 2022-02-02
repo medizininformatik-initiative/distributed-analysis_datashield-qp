@@ -4,13 +4,16 @@ on:
   push:
     branches:
       - 'master'
-    tags: [ 'v*.*.*' ] 
+    tags: [ 'v*.*.*' ]
 
 jobs:
     build_ds_opal:
       uses: ./.github/workflows/build.yaml
       with:
         package: ds_opal
+      secrets:
+        token: secret.GITHUB_TOKEN
+
 
     # build_ds_poll:
     #   runs-on: ubuntu-20.04

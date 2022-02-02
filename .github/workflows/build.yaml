@@ -22,9 +22,7 @@ on:
         default: github.actor
     secrets:
       token:
-        required: false
-        type: string
-        default: secret.GITHUB_TOKEN
+        required: true
 
 jobs:
   build_ds_opal:
