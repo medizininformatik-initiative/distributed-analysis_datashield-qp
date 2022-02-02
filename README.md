@@ -9,4 +9,4 @@ This is a repository which provides a combination of docker packaged components 
 
 ## Deployment
 
-Inside the deploy folder we provide the newest installation packages, which allow one to install the newest version of the DataSHIELD infrastructure.
+Inside the deploy folder we provide the newest installation packages, which allow one to install the newest version of the DataSHIELD infrastructure. Please refer to the [readme file](https://github.com/fnwirth/distributed-analysis_datashield-qp/blob/proposal-rearrange-deploy-folder/deploy/README.md).
