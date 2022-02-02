@@ -6,7 +6,10 @@ on:
       package:
         required: true
         type: string
-      
+      workdir:
+        required: true
+        type: string
+
       # optional variables
       image_name:
         required: false
@@ -73,7 +76,7 @@ jobs:
         with:
           registry: ${{ inputs.registry }}
           context: ./${{ inputs.package }}
-          file: ./${{ inputs.package }}/${{ inputs.dockerfile }}
+          file: ./${{ inputs.workdir }}/${{ inputs.dockerfile }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
