@@ -6,9 +6,6 @@ on:
       package:
         required: true
         type: string
-      tags:
-        required: true
-        type: string
       
       # optional variables
       image_name:
@@ -69,9 +66,6 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: ${{ inputs.registry }}/${{ inputs.image_name }}/${{ inputs.package }}
-          tags: |
-            latest
-            current
 
       - name: Build and push
         id: build-and-push

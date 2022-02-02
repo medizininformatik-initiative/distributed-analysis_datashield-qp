@@ -1,11 +1,10 @@
 name: ci
 
 on:
-  push:
-    branches:
-      - 'dev'
-  # tags:        
-  #     - v* #v1.0.0
+  # push:
+  #   branches:
+  #     - 'master'
+  tags: [ 'v*.*.*' ] 
 
 jobs:
     build_ds_opal:
@@ -13,7 +12,6 @@ jobs:
       uses: ./.github/workflows/build.yaml
       with:
         package: ds_opal
-        tags: 
         image_name: env.IMAGE_NAME
 
     build_ds_poll:
@@ -21,7 +19,6 @@ jobs:
       uses: ./.github/workflows/build.yaml
       with:
         package: ds_poll
-        tags: 
         image_name: env.IMAGE_NAME
 
     build_ds_queue:
@@ -29,7 +26,6 @@ jobs:
       uses: ./.github/workflows/build.yaml
       with:
         package: ds_queue
-        tags: 
         image_name: env.IMAGE_NAME
 
     build_ds_simple_client:
@@ -37,7 +33,6 @@ jobs:
       uses: ./.github/workflows/build.yaml
       with:
         package: ds_simple_client
-        tags: 
         image_name: env.IMAGE_NAME
 
     build_ds_test:
@@ -45,6 +40,5 @@ jobs:
       uses: ./.github/workflows/build.yaml
       with:
         package: ds_test
-        tags: 
         image_name: env.IMAGE_NAME
 
