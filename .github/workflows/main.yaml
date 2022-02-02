@@ -11,6 +11,7 @@ jobs:
       uses: ./.github/workflows/build.yaml
       with:
         package: ds_opal
+        workdir: ds_opal
       secrets:
         token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -18,6 +19,7 @@ jobs:
       uses: ./.github/workflows/build.yaml
       with:
         package: ds_poll
+        workdir: ds_poll
       secrets:
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -25,6 +27,16 @@ jobs:
       uses: ./.github/workflows/build.yaml
       with:
         package: ds_queue
+        workdir: ds_queue
+      secrets:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+    build_ds_queue:
+      uses: ./.github/workflows/build.yaml
+      with:
+        package: ds_queue_nginx
+        workdir: ds_queue
+        dockerfile: Dockerfile.nginx.queue
       secrets:
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -32,6 +44,7 @@ jobs:
       uses: ./.github/workflows/build.yaml
       with:
         package: ds_simple_client
+        workdir: ds_simple_client
       secrets:
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -39,6 +52,7 @@ jobs:
       uses: ./.github/workflows/build.yaml
       with:
         package: ds_test
+        workdir: ds_test
       secrets:
           token: ${{ secrets.GITHUB_TOKEN }}
 
