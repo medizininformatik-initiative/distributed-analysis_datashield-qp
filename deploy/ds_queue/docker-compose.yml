@@ -12,5 +12,3 @@ services:
     volumes:
       - ../../cert/do_cert/queue.key:/home/dsqueue/ds_queue/cert/queuekey.pem
       - ../../cert/do_cert/queue.crt:/home/dsqueue/ds_queue/cert/queuecert.pem
-      - ..:/home/dsqueue/ds_queue
-    entrypoint: bash -c "tail -f /dev/null"
