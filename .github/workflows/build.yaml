@@ -20,6 +20,10 @@ on:
         required: false
         type: string
         default: ${{ github.actor }}
+      dockerfile:
+        required: false
+        type: string
+        default: Dockerfile
     secrets:
       token:
         required: true
@@ -69,7 +73,7 @@ jobs:
         with:
           registry: ${{ inputs.registry }}
           context: ./${{ inputs.package }}
-          file: ./${{ inputs.package }}/Dockerfile
+          file: ./${{ inputs.package }}/${{ inputs.dockerfile }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
