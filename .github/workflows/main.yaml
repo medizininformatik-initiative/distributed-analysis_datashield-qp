@@ -1,0 +1,44 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - 'master'
+    tags: [ 'v*.*.*' ]
+
+jobs:
+    build_ds_opal:
+      uses: ./.github/workflows/build.yaml
+      with:
+        package: ds_opal
+      secrets:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    build_ds_poll:
+      uses: ./.github/workflows/build.yaml
+      with:
+        package: ds_poll
+      secrets:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+    build_ds_queue:
+      uses: ./.github/workflows/build.yaml
+      with:
+        package: ds_queue
+      secrets:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+    build_ds_simple_client:
+      uses: ./.github/workflows/build.yaml
+      with:
+        package: ds_simple_client
+      secrets:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+    build_ds_test:
+      uses: ./.github/workflows/build.yaml
+      with:
+        package: ds_test
+      secrets:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
