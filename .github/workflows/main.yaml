@@ -64,7 +64,7 @@ jobs:
           registry: ${{ env.REGISTRY }}
           context: ./ds_opal
           file: ./ds_opal/Dockerfile
-          push: false
+          push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
             
