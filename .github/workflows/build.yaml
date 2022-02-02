@@ -11,7 +11,7 @@ on:
       image_name:
         required: false
         type: string
-        default: github.repository
+        default: ${{ github.repository }}
       registry: 
         required: false
         type: string
@@ -19,7 +19,7 @@ on:
       username:
         required: false
         type: string
-        default: github.actor
+        default: ${{ github.actor }}
     secrets:
       token:
         required: true
