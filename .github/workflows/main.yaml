@@ -1,0 +1,44 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - 'master'
+    tags: [ 'v*.*.*' ] 
+
+jobs:
+    build_ds_opal:
+      runs-on: ubuntu-20.04
+      uses: ./.github/workflows/build.yaml
+      with:
+        package: ds_opal
+        image_name: env.IMAGE_NAME
+
+    build_ds_poll:
+      runs-on: ubuntu-20.04
+      uses: ./.github/workflows/build.yaml
+      with:
+        package: ds_poll
+        image_name: env.IMAGE_NAME
+
+    build_ds_queue:
+      runs-on: ubuntu-20.04
+      uses: ./.github/workflows/build.yaml
+      with:
+        package: ds_queue
+        image_name: env.IMAGE_NAME
+
+    build_ds_simple_client:
+      runs-on: ubuntu-20.04
+      uses: ./.github/workflows/build.yaml
+      with:
+        package: ds_simple_client
+        image_name: env.IMAGE_NAME
+
+    build_ds_test:
+      runs-on: ubuntu-20.04
+      uses: ./.github/workflows/build.yaml
+      with:
+        package: ds_test
+        image_name: env.IMAGE_NAME
+
