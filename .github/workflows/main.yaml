@@ -19,30 +19,30 @@ jobs:
       uses: ./.github/workflows/build.yaml
       with:
         package: ds_poll
-    secrets:
-        token: ${{ secrets.GITHUB_TOKEN }}
+      secrets:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
     build_ds_queue:
       runs-on: ubuntu-20.04
       uses: ./.github/workflows/build.yaml
       with:
         package: ds_queue
-    secrets:
-        token: ${{ secrets.GITHUB_TOKEN }}
+      secrets:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
     build_ds_simple_client:
       runs-on: ubuntu-20.04
       uses: ./.github/workflows/build.yaml
       with:
         package: ds_simple_client
-    secrets:
-        token: ${{ secrets.GITHUB_TOKEN }}
+      secrets:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
     build_ds_test:
       runs-on: ubuntu-20.04
       uses: ./.github/workflows/build.yaml
       with:
         package: ds_test
-    secrets:
-        token: ${{ secrets.GITHUB_TOKEN }}
+      secrets:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
