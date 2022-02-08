@@ -31,7 +31,7 @@ jobs:
       secrets:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-    build_ds_queue:
+    build_ds_queue_nginx:
       uses: ./.github/workflows/build.yaml
       with:
         package: ds_queue_nginx
