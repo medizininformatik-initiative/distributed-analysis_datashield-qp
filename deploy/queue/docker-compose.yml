@@ -1,0 +1,35 @@
+version: '2.0'
+
+services:
+  nginx_queue:
+    container_name: nginx_queue
+    restart: unless-stopped
+    image: docker.miracum.org/datashield_miracum/nginx_queue:v0.8.4
+    ports:
+      - "443:8443"
+    networks:
+      - queue_net
+    environment:
+      - ALLOWED_IPS=${ALLOWED_IPS}
+    volumes:
+      - /etc/dsqp/nginx/queuecert.pem:/etc/nginx/conf.d/queuecert.pem
+      - /etc/dsqp/nginx/queuekey.pem:/etc/nginx/conf.d/queuekey.pem
+      - /etc/dsqp/nginx/dhparam.pem:/etc/nginx/dhparam.pem
+      - /etc/dsqp/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    
+  queue_server:
+    container_name: queue_server
+    restart: unless-stopped
+    image: docker.miracum.org/datashield_miracum/ds_queue:v0.8.4
+    volumes:
+      - ${QP_DATA_DIR}/queue_logging:/home/dsqueue/ds_queue/logging
+      - /etc/dsqp/auth/queue.pem:/root/ds_queue/cert/do_cert/queue.pem
+    environment:
+      - TIMEOUT_QUEUE_AND_POLL=${TIMEOUT_QUEUE_AND_POLL}
+      - ALLOWED_IPS=${ALLOWED_IPS}
+      - LOG_LEVEL=${LOG_LEVEL}
+    networks:
+      - queue_net
+
+networks:
+  queue_net:
