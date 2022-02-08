@@ -75,7 +75,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           registry: ${{ inputs.registry }}
-          context: ./${{ inputs.package }}
+          context: ./${{ inputs.workdir }}
           file: ./${{ inputs.workdir }}/${{ inputs.dockerfile }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
