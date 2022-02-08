@@ -1,4 +1,0 @@
-*.pyc
-*.logs
-/logging
-/deploy/data

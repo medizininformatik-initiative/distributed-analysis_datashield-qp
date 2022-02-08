@@ -1,10 +1,9 @@
 #!/bin/bash
 ALLOWED_IPS=${ALLOWED_IPS:-""}
 
-echo "Allowed IPs are: $ALLOWED_IPS"
+echo $ALLOWED_IPS
 
-ips=${ALLOWED_IPS/-c /}
-ips=$(echo $ips | tr ",'" "\n")
+ips=$(echo $ALLOWED_IPS | tr ",'" "\n")
 
 printf "" > /etc/nginx/conf.d/queue_allow_ips.conf
 
