@@ -40,13 +40,15 @@ ds-qp_rock2_1: An R execution Server used by Opal to execute the datashield requ
 
 ## Start developing
 
-Visit your browser on localhost to access your Opal datawarehouse application: <http://localhost:8880/ui/index.html>
+Visit your browser on localhost to access your Opal datawarehouse application: <http://localhost:8880/ui/index.html> (user: administrator, password: develop)
+
 If you are not familiar with Opal and DataSHIELD, please refer to the official documentation: <https://opaldoc.obiba.org/en/latest/cookbook/index.html>
 
 
 ### Start your Queue Server
 
 `docker exec -it queue_server bash`
+
 `python3 ds_queue.py -a 0.0.0.0 -p 443 -i -t 10:10 -l 10`
 
 The files of the queue server are mounted to the queue_server docker container:
@@ -56,6 +58,7 @@ the queue application will run with your changes
 ### Start your Poll Application
 
 `docker exec -it poll_server bash`
+
 `python3 ds_poll.py -q queue_server:443 -o datashield_opal:8080 -l 10 -t 2`
 
 The files of the poll server are mounted to the poll_server docker container:
@@ -65,7 +68,9 @@ the poll application will run with your changes.
 ### Enter your simple datashield client and send a request via the queue and poll
 
 `docker exec -it ds_simple_client bash`
-`cd /testscript`
+
+`cd /testscripts`
+
 `Rscript datashield_test.r`
 
 The scripts inside the ds_test/testcript folder  are mounted to the ds_simple_client  docker container:
