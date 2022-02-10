@@ -11,7 +11,7 @@ builder <- DSI::newDSLoginBuilder()
 #builder$append(server="server1", url='https://nginx_queue:8443',
 #               user="administrator", password="develop")
 
-builder$append(server="server1", url='http://queue_server:443',
+builder$append(server="server1", url='http://queue_server:8443',
                user="administrator", password="develop")
 
 logindata <- builder$build()

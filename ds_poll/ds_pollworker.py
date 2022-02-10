@@ -19,18 +19,9 @@ CA_PATH = '/etc/ssl/certs'
 
 class Pollworker():
 
-    def __init__(self, q_host, q_port, o_host, o_port, pollstate, threadName):
-        self.q_host = q_host
-        self.q_port = q_port
-        self.o_host = o_host
-        self.o_port = o_port
+    def __init__(self, pollstate, threadName):
         self.pollstate = pollstate
         self.threadName = threadName
-
-        if pollstate.https:
-            self.pollstate.protocol = 'https'
-        else:
-            self.pollstate.protocol = 'http'
 
     def _getresponse_with_body_as_string(self, res):
 
@@ -58,12 +49,12 @@ class Pollworker():
     def getNextRequest(self):
 
         try:
-            url = self.pollstate.protocol + "://" + str(self.q_host) + ":" + str(self.q_port)
-            res = requests.get(url + "/?getQueuedRequest=True")
+            url = f'{self.pollstate.queue_addr}?getQueuedRequest=True'
+            res = requests.get(url)
 
         except requests.exceptions.ConnectionError as e:
             print(e)
-            self.pollstate.log.debug("Queue at address:" + str(self.q_host) + ":" + str(self.q_port) + " not available")
+            self.pollstate.log.debug(f'Queue at address: {self.pollstate.queue_addr} not available')
             return None
 
         return res
@@ -75,7 +66,7 @@ class Pollworker():
 
         if res.status_code != 200:
             self.pollstate.log.debug("Connected to queue, but error getting next request, check if your queue and nginx are running correctly," +
-                                     " response from queue: %s %s \n %s" % (str(res.code), res.msg))
+                                     " response from queue: %s %s \n" % (str(res.code), res.msg))
             return
 
         res_buf = io.BytesIO(res.content)
@@ -87,9 +78,9 @@ class Pollworker():
         req.removeHeader('reqId')
 
         try:
-            self.pollstate.log.debug("sending request to opal with id %s" % (reqId))
+            self.pollstate.log.debug(f'sending request to opal with id {reqId}')
 
-            opal_url = f'{self.pollstate.protocol}://{self.o_host}:{self.o_port}{req.getPath()}'
+            opal_url = f'{self.pollstate.opal_addr}{req.getPath()}'
             headers = {}
             for header in req.headers.keys():
                 headers[header] = req.headers[header][0]
@@ -97,8 +88,8 @@ class Pollworker():
             res = requests.request(req.getMethod(), opal_url, data=req.getBody(), headers=headers, stream=True)
 
         except Exception as e:
-            self.pollstate.log.info("Error connecting to Opal with address " + str(self.pollstate.opal_addr[0]) + ":" + str(self.pollstate.opal_addr[1]))
-            url = self.pollstate.protocol + "://" + str(self.q_host) + ":" + str(self.q_port) + "?setQueuedResponse=True&reqId=" + reqId
+            self.pollstate.log.info(f'Error connecting to Opal with address: {self.pollstate.opal_addr}')
+            url = f'{self.pollstate.opal_addr}?setQueuedResponse=True&reqId={reqId}'
             res = HTTPResponse("HTTP/1.1", "502", "Opal not accessbile", body="")
             payload = res.serialize()
             requests.post(url, data=payload)
@@ -108,6 +99,6 @@ class Pollworker():
         self.pollstate.log.log_message_as_json(parceled_res)
         payload = parceled_res.serialize()
 
-        self.pollstate.log.debug("sending response from opal to queue with id %s" % (reqId))
-        url = self.pollstate.protocol + "://" + str(self.q_host) + ":" + str(self.q_port) + "?setQueuedResponse=True&reqId=" + reqId
+        self.pollstate.log.debug(f'sending response from opal to queue with id {reqId}')
+        url = f'{self.pollstate.queue_addr}?setQueuedResponse=True&reqId={reqId}'
         requests.post(url, data=payload)
