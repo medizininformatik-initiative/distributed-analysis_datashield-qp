@@ -3,11 +3,9 @@ version: '2.0'
 services:
   queue_nginx:
     restart: unless-stopped
-    image: ghcr.io/medizininformatik-initiative/distributed-analysis_datashield-qp/ds_queue:v0.0.1
+    image: ghcr.io/medizininformatik-initiative/distributed-analysis_datashield-qp/ds_queue_nginx:v0.0.1
     ports:
       - "443:8443"
-    networks:
-      - queue_net
     environment:
       - ALLOWED_IPS=${ALLOWED_IPS}
     volumes:
@@ -17,7 +15,7 @@ services:
       - /auth/nginx.conf:/etc/nginx/nginx.conf:ro
     
   queue_server:
-    image: ghcr.io/medizininformatik-initiative/distributed-analysis_datashield-qp/ds_queue_nginx:v0.0.1
+    image: ghcr.io/medizininformatik-initiative/distributed-analysis_datashield-qp/ds_queue:v0.0.1
     restart: unless-stopped
     volumes:
       - ${QP_DATA_DIR}/queue_logging:/home/dsqueue/ds_queue/logging

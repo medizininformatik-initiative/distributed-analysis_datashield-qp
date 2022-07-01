@@ -14,6 +14,6 @@ exit
 fi
 
 
-printf "######################\nInitialising Opal and installing Datashield and RServer ...\n######################\n\n"
+printf "######################\n Starting Polling ...\n######################\n\n"
 
 docker-compose -p $QP_DOCKER_PROJECT up -d
