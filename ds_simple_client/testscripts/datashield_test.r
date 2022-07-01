@@ -1,6 +1,7 @@
 # Load DataSHIELD base package
-library(dsBaseClient)
 library(DSOpal)
+library(dsBaseClient)
+
 
 # The login data object is a data.frame
 builder <- DSI::newDSLoginBuilder()
@@ -11,7 +12,7 @@ builder <- DSI::newDSLoginBuilder()
 #builder$append(server="server1", url='https://nginx_queue:8443',
 #               user="administrator", password="develop")
 
-builder$append(server="server1", url='http://queue_server:443',
+builder$append(server="server1", url='https://queue_server:8443/qprequest/erlangen',
                user="administrator", password="develop")
 
 logindata <- builder$build()

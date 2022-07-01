@@ -13,7 +13,8 @@ RUN apt-get update && \
 apt-get install -y r-base r-base-dev && \
 apt-get install -y libcurl4-openssl-dev libssl-dev && \
 apt-get install -y libxml2-utils && \
-apt-get install -y libxml2-dev
+apt-get install -y libxml2-dev && \
+apt-get install -y cMake
 
 # install opal packages
 RUN R -e "install.packages('DSOpal', repos=c(getOption('repos'), 'https://cran.obiba.org'))" && \

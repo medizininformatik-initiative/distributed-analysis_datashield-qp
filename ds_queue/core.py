@@ -4,8 +4,8 @@
 
   Copyright (C) 2018
       Julian Gruendner     <juliangruendner@googlemail.com>
-
 """
+
 import queue
 import socketserver
 import threading
@@ -16,6 +16,7 @@ import os
 import json
 from ds_http.ds_http import HTTPRequest, HTTPResponse
 from logger import Logger
+from urllib.parse import urlparse, urlunparse
 
 KEY_FILE = "./cert/queuekey.pem"
 CERT_FILE = "./cert/queuecert.pem"
@@ -51,7 +52,10 @@ class ProxyHandler(socketserver.StreamRequestHandler):
         proxystate.log.debug(req.serialize())
 
         req = req.clone()
+        self.req = req.clone()
         orig_ip = req.getHeader("X-Real-IP")
+
+        proxystate.log.debug(str(proxystate.api_keys))
 
         if len(orig_ip) > 0:
             orig_ip = orig_ip[0]
@@ -62,12 +66,29 @@ class ProxyHandler(socketserver.StreamRequestHandler):
 
         self.handleQpRequest(req)
 
+    def extract_site_from_path(self, req):
+        req_url = urlparse(req.url)
+        path_arr = req_url.path.split("/")
+        index = path_arr.index("qprequest") + 1
+        site = path_arr[index]
+        return site
+
+    def remove_qp_site_from_path(self, req):
+        req_url = urlparse(req.url)
+        path_arr = req_url.path.split("/")
+        index = path_arr.index("qprequest") + 2
+        fixed_path = path_arr[index:]
+        fixed_path_s = "/".join(map(str, fixed_path))
+        fixed_url = urlunparse(req_url._replace(path=fixed_path_s))
+        req.url = str(fixed_url)
+        return req
+
     def handleQpRequest(self, req):
 
         queryParams = req.getQueryParams()
 
         if 'getQueuedRequest' in queryParams:
-            self.getQueuedRequest()
+            self.getQueuedRequest(req)
         elif 'setQueuedResponse' in queryParams:
             self.setQueuedResponse(req)
         elif 'resetQueue' in queryParams:
@@ -80,26 +101,79 @@ class ProxyHandler(socketserver.StreamRequestHandler):
             self.execQueueRequest(req)
 
     def execQueueRequest(self, req):
-        reqUu = str(uuid.uuid4())
-        proxystate.log.debug("queueing request with id %s" % (reqUu))
-        self.setQueuedRequest(req, reqUu)
-        proxystate.log.debug("getting repsonse of queued request with id %s" % (reqUu))
-        self.getQueuedResponse(reqUu)
+        site = self.extract_site_from_path(req)
+        req = self.remove_qp_site_from_path(req)
 
-    def setQueuedRequest(self, req, reqUu):
+        reqUu = str(uuid.uuid4())
+        proxystate.log.debug(f'queueing request with id {reqUu} for site {site}')
+        self.setQueuedRequest(req, reqUu, site)
+        proxystate.log.debug(f'getting repsonse of queued request with id {reqUu} for site {site}')
+        self.getQueuedResponse(reqUu, site)
+
+    def setQueuedRequest(self, req, reqUu, site):
 
         try:
             req.addHeader('reqId', reqUu)
-            proxystate.reqQueue.put(req)
-            proxystate.resQueueList[reqUu] = queue.Queue()
+            proxystate.reqQueueList[site].put(req)
+            proxystate.resQueueList[site][reqUu] = queue.Queue()
         except queue.Full as e:
             proxystate.log.debug(e.__str__())
             return
 
-    def getQueuedRequest(self):
+    def get_token_auth_header(self, req):
+        """Obtains the Access Token from the Authorization Header
+        """
+
+        auth = req.getHeader("Authorization")
+
+        if not auth:
+            raise Exception({"code": "authorization_header_missing",
+                            "description":
+                                "Authorization header is expected"}, 401)
+
+        parts = auth[0].split()
+
+        if parts[0].lower() != "bearer":
+            raise Exception({"code": "invalid_header",
+                            "description":
+                                "Authorization header must start with"
+                                " Bearer"}, 401)
+        elif len(parts) == 1:
+            raise Exception({"code": "invalid_header",
+                            "description": "Token not found"}, 401)
+        elif len(parts) > 2:
+            raise Exception({"code": "invalid_header",
+                            "description":
+                                "Authorization header must be"
+                                " Bearer token"}, 401)
+        return parts[1]
+
+    def get_site_from_api_key(self, req):
+        api_key = self.get_token_auth_header(req)
+
+        if api_key not in proxystate.api_keys:
+            proxystate.log.debug("api key is not valid")
+            return None
+
+        return proxystate.api_keys[api_key]
+
+    def api_access(func):
+        def wrap(*args, **kwargs):
+            instance = args[0]
+            if instance.get_site_from_api_key(instance.req) is None:
+                res = HTTPResponse('HTTP/1.1', 401, 'FORBIDDEN')
+                instance.sendResponse(res.serialize())
+                return
+            func(*args, **kwargs)
+        return wrap
+
+    @api_access
+    def getQueuedRequest(self, req):
+
+        site = self.get_site_from_api_key(req)
 
         try:
-            req = proxystate.reqQueue.get(timeout=proxystate.requestTimeout)
+            req = proxystate.reqQueueList[site].get(timeout=proxystate.requestTimeout)
         except queue.Full as e:
             proxystate.log.debug(e.__str__())
             return
@@ -113,12 +187,15 @@ class ProxyHandler(socketserver.StreamRequestHandler):
 
         self.sendResponse(res.serialize())
 
+    @api_access
     def setQueuedResponse(self, req):
+
+        site = self.get_site_from_api_key(req)
 
         try:
             reqId = req.getQueryParams()['reqId'][0]
             res = req.getBody()
-            proxystate.resQueueList[reqId].put(res)
+            proxystate.resQueueList[site][reqId].put(res)
         except queue.Full as e:
             proxystate.log.debug(e.__str__())
             return
@@ -126,11 +203,11 @@ class ProxyHandler(socketserver.StreamRequestHandler):
         res = HTTPResponse('HTTP/1.1', 200, 'OK')
         self.sendResponse(res.serialize())
 
-    def getQueuedResponse(self, reqId):
+    def getQueuedResponse(self, reqId, site):
 
         try:
-            res = proxystate.resQueueList[reqId].get(timeout=proxystate.responseTimeout)
-            del proxystate.resQueueList[reqId]
+            res = proxystate.resQueueList[site][reqId].get(timeout=proxystate.responseTimeout)
+            del proxystate.resQueueList[site][reqId]
         except Exception:
             res = HTTPResponse('HTTP/1.1', 503, 'Queue timed out - poll server did not respond in seconds ' + str(proxystate.responseTimeout)).serialize()
             self.sendResponse(res)
@@ -138,6 +215,7 @@ class ProxyHandler(socketserver.StreamRequestHandler):
         proxystate.log.debug("sending response with id %s back to client" % (reqId))
         self.sendResponse(res)
 
+    @api_access
     def resetQueue(self):
         proxystate.resQueueList = {}
         proxystate.reqQueue.queue.clear()
@@ -213,8 +291,11 @@ class ProxyState:
         # Internal state
         self.log = Logger()
         self.redirect = None
-        self.reqQueue = queue.Queue()
-        self.resQueueList = {}
+
+        # TODO - create queue per site
+
+        self.reqQueueList = {"erlangen": queue.Queue()}
+        self.resQueueList = {"erlangen": {}}
         self.responseTimeout = None
         self.requestTimeout = None
         self.allowed_ips = None

@@ -7,4 +7,4 @@ POLL_OPAL_SERVER=${POLL_OPAL_SERVER:-"datashield_opal:8443"}
 OWN_CERT_CA=$OWN_CERT_CA
 
 printf "starting poll server with following command: python3 ds_poll.py -q $POLL_QUEUE_SERVER -o $POLL_OPAL_SERVER -s -l $LOG_LEVEL -t $POLL_THREADS $OWN_CERT_CA"
-python3 ds_poll.py -q $POLL_QUEUE_SERVER -o $POLL_OPAL_SERVER -s -l $LOG_LEVEL -t $POLL_THREADS $OWN_CERT_CA
+python3 ds_poll.py -q $POLL_QUEUE_SERVER -o $POLL_OPAL_SERVER -s -l $LOG_LEVEL -t $POLL_THREADS $OWN_CERT_CA -k $QUEUE_API_KEY

@@ -11,6 +11,7 @@ services:
             - POLL_THREADS=${POLL_THREADS}
             - LOG_LEVEL=${LOG_LEVEL}
             - OWN_CERT_CA=${OWN_CERT_CA}
+            - QUEUE_API_KEY=${QUEUE_API_KEY}
         volumes:
             - ../../cert/ca_cert/ds_develop_ca.crt:/usr/local/share/ca-certificates/ds_develop_ca.crt
             - ..:/home/dspoll/ds_poll

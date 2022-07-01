@@ -144,10 +144,10 @@ class HTTPMessage():
             
         return False
             
-    def setPeer(self, h, link = True):
+    def setPeer(self, h, link=True):
         self.peer = h
         if link:
-            h.setPeer(self, link = False)
+            h.setPeer(self, link=False)
 
     def clone(self):
         return copy.deepcopy(self)
@@ -166,7 +166,7 @@ class HTTPMessage():
             url = scheme + '://' + headers['Host'][0] + url
         return url
 
-    def __findHeader(self, name, ignorecase = True):
+    def __findHeader(self, name, ignorecase=True):
         r = None
         for n in self.headers:
             if (ignorecase and name.lower() == n.lower()) or ((not ignorecase) and name == n):
@@ -174,7 +174,7 @@ class HTTPMessage():
                 break
         return r
 
-    def getHeader(self, name, ignorecase = True):
+    def getHeader(self, name, ignorecase=True):
         """
         Get the values of header(s) with name 'name'. If 'ignorecase' is True,
         then the case of the header name is ignored.

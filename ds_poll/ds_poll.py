@@ -34,12 +34,13 @@ Syntax: python %s <options>
  -l <loglevel number> 
  -t <number>       number of threads to create for polling
  -s                set ssl context to verify server side
- -c                if option given sets the ssl context to accept custom certificate authorities under 
+ -c                if option given sets the ssl context to accept custom certificate authorities under
+ -k                api key to access queue
 """ % sys.argv[0])
 
 def parse_options():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "a:d:hp:r:l:q:o:sct:")
+        opts, args = getopt.getopt(sys.argv[1:], "a:d:hp:r:l:q:o:sct:k:")
     except getopt.GetoptError as e:
         print(str(e))
         show_help()
@@ -55,6 +56,9 @@ def parse_options():
 
     if 'l' in opts:
         ps.log.set_level(int(opts['l']))
+
+    if 'k' in opts:
+        ps.api_key = opts['k']
 
     # Check and parse queue host
     if 'q' in opts:

@@ -15,7 +15,7 @@ import requests
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.SubjectAltNameWarning)
 
-CA_PATH = '/etc/ssl/certs'
+# REQUESTS_CA_BUNDLE = '/etc/ssl/certs/ca-certificates.crt'
 
 class Pollworker():
 
@@ -59,7 +59,8 @@ class Pollworker():
 
         try:
             url = self.pollstate.protocol + "://" + str(self.q_host) + ":" + str(self.q_port)
-            res = requests.get(url + "/?getQueuedRequest=True")
+            headers = {'Authorization': f'Bearer {self.pollstate.api_key}'}
+            res = requests.get(url + "/?getQueuedRequest=True", headers=headers)
 
         except requests.exceptions.ConnectionError as e:
             print(e)
@@ -97,7 +98,8 @@ class Pollworker():
             res = requests.request(req.getMethod(), opal_url, data=req.getBody(), headers=headers, stream=True)
 
         except Exception as e:
-            self.pollstate.log.info("Error connecting to Opal with address " + str(self.pollstate.opal_addr[0]) + ":" + str(self.pollstate.opal_addr[1]))
+            self.pollstate.log.error("Error connecting to Opal with address " + str(self.pollstate.opal_addr[0]) + ":" + str(self.pollstate.opal_addr[1]))
+            self.pollstate.log.error(e)
             url = self.pollstate.protocol + "://" + str(self.q_host) + ":" + str(self.q_port) + "?setQueuedResponse=True&reqId=" + reqId
             res = HTTPResponse("HTTP/1.1", "502", "Opal not accessbile", body="")
             payload = res.serialize()
@@ -110,4 +112,6 @@ class Pollworker():
 
         self.pollstate.log.debug("sending response from opal to queue with id %s" % (reqId))
         url = self.pollstate.protocol + "://" + str(self.q_host) + ":" + str(self.q_port) + "?setQueuedResponse=True&reqId=" + reqId
-        requests.post(url, data=payload)
+        token = "afjas12eada23142dew"
+        headers = {'Authorization': f'Bearer {token}'}
+        requests.post(url, data=payload, headers=headers)
