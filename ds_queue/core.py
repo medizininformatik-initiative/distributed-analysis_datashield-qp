@@ -55,13 +55,11 @@ class ProxyHandler(socketserver.StreamRequestHandler):
         self.req = req.clone()
         orig_ip = req.getHeader("X-Real-IP")
 
-        proxystate.log.debug(str(proxystate.api_keys))
-
         if len(orig_ip) > 0:
             orig_ip = orig_ip[0]
 
         if proxystate.allowed_ips and orig_ip not in proxystate.allowed_ips:
-            print("rejecting ip : " + str(orig_ip))
+            proxystate.log.info(f'Rejecting ip {str(orig_ip)}')
             return
 
         self.handleQpRequest(req)
@@ -86,6 +84,7 @@ class ProxyHandler(socketserver.StreamRequestHandler):
     def handleQpRequest(self, req):
 
         queryParams = req.getQueryParams()
+        req_url = urlparse(req.url)
 
         if 'getQueuedRequest' in queryParams:
             self.getQueuedRequest(req)
@@ -97,8 +96,11 @@ class ProxyHandler(socketserver.StreamRequestHandler):
             self.ping()
         elif 'queueSizes' in queryParams:
             self.get_q_sizes()
-        else:
+        elif 'qprequest' == req_url.path.split("/")[0]:
             self.execQueueRequest(req)
+        else:
+            res = HTTPResponse('HTTP/1.1', 404, 'NOT FOUND')
+            self.sendResponse(res.serialize())
 
     def execQueueRequest(self, req):
         site = self.extract_site_from_path(req)
