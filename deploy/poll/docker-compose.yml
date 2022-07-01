@@ -1,0 +1,13 @@
+version: '3.5'
+services:
+
+  poll:
+    restart: unless-stopped
+    image: ghcr.io/medizininformatik-initiative/distributed-analysis_datashield-qp/ds_poll:sha256-c4d250b7a6e81929283b281e20832e958ea590294a1ebf932a799abe70e6329b.sig
+    restart: unless-stopped
+    environment:
+      - POLL_QUEUE_SERVER=${POLL_QUEUE_SERVER}
+      - POLL_OPAL_SERVER=${POLL_OPAL_SERVER:-opal:8443}
+      - POLL_THREADS=${POLL_THREADS:-2}
+      - OWN_CERT_CA=${OWN_CERT_CA}
+      - LOG_LEVEL=${LOG_LEVEL:-20}
