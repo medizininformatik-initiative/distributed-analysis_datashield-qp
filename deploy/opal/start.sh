@@ -21,6 +21,6 @@ if [ ! -f "$KEY_FILE" ] || [ ! -f "$CERT_FILE" ]; then
     exit
 fi
 
-docker-compose up -p $QP_DOCKER_PROJECT -d
+docker-compose -p $QP_DOCKER_PROJECT up -d
 
 printf "\n - Check if queue is running by typing 'docker ps' into the command line \n"

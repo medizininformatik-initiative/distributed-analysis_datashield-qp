@@ -13,7 +13,7 @@ fi
 FILE=auth/dhparam.pem
 if [ ! -f "$FILE" ]; then
     echo "Creating longer Diffie-Hellman Prime for extra security... this may take a while \n\n"
-    openssl dhparam -out /etc/dsqp/nginx/dhparam.pem 4096
+    openssl dhparam -out auth/dhparam.pem 4096
 fi
 
 KEY_FILE=auth/key.pem

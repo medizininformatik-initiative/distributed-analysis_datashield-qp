@@ -16,4 +16,4 @@ fi
 
 printf "######################\nInitialising Opal and installing Datashield and RServer ...\n######################\n\n"
 
-docker-compose up -p $QP_DOCKER_PROJECT -d
+docker-compose -p $QP_DOCKER_PROJECT up -d
