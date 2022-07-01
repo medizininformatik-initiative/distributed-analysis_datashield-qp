@@ -1,6 +1,6 @@
 services:
   opal:
-    image:  ghcr.io/medizininformatik-initiative/distributed-analysis_datashield-qp/ds_opal:sha256-5de21239f4c8987728c840c2de8ba8d76d386f59d1ec9d9a3626ac21b25b40b6.sig
+    image: ghcr.io/medizininformatik-initiative/distributed-analysis_datashield-qp/ds_opal:v0.0.1
     restart: unless-stopped
     ports:
       - "8443:8443"
