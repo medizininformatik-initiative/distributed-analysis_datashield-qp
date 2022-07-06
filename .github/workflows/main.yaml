@@ -46,4 +46,3 @@ jobs:
         workdir: ds_simple_client
       secrets:
           token: ${{ secrets.GITHUB_TOKEN }}
-          
