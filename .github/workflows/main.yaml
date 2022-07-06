@@ -39,3 +39,11 @@ jobs:
         dockerfile: Dockerfile.nginx.queue
       secrets:
           token: ${{ secrets.GITHUB_TOKEN }}
+    build_simple_client:
+      uses: ./.github/workflows/build.yaml
+      with:
+        package: ds_simple_client
+        workdir: ds_simple_client
+      secrets:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          
