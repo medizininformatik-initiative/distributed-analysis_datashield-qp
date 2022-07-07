@@ -12,7 +12,10 @@ builder <- DSI::newDSLoginBuilder()
 #builder$append(server="server1", url='https://nginx_queue:8443',
 #               user="administrator", password="develop")
 
-builder$append(server="server1", url='https://queue_server:8443/qprequest/erlangen',
+builder$append(server="server1", url='https://queue_server:443/qprequest/site1',
+               user="administrator", password="develop")
+
+builder$append(server="server2", url='https://queue_server:443/qprequest/site2',
                user="administrator", password="develop")
 
 logindata <- builder$build()
@@ -22,8 +25,10 @@ connections <- datashield.login(logins=logindata)
 
 
 datashield.assign.table(connections, symbol = "D",
-                        table = list(server1 = "test.CNSIM1"),
+                        table = list(server1 = "test.CNSIM1", server2 = "test.CNSIM1"),
                         variables=list('LAB_GLUC','LAB_HDL'))
+
+
 
 mean <- ds.mean(x = 'D$LAB_HDL', type = "combine", datasources = connections)
 print(mean)

@@ -87,16 +87,12 @@ def parse_options():
 
     return ps
 
-def initialise_api_keys(proxystate):
-    with open('api-tokens.json') as json_file:
-        proxystate.api_keys = json.load(json_file)
-
 def main():
     global proxystate
     proxystate = parse_options()
-    initialise_api_keys(proxystate)
     proxyServer = ProxyServer(proxystate)
     proxyServer.startProxyServer()
+
 
 if __name__ == "__main__":
     global proxystate

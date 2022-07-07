@@ -90,7 +90,7 @@ class Pollworker():
         try:
             self.pollstate.log.debug("sending request to opal with id %s" % (reqId))
 
-            opal_url = f'{self.pollstate.protocol}://{self.o_host}:{self.o_port}{req.getPath()}'
+            opal_url = f'http://{self.o_host}:{self.o_port}{req.getPath()}'
             headers = {}
             for header in req.headers.keys():
                 headers[header] = req.headers[header][0]
@@ -112,6 +112,5 @@ class Pollworker():
 
         self.pollstate.log.debug("sending response from opal to queue with id %s" % (reqId))
         url = self.pollstate.protocol + "://" + str(self.q_host) + ":" + str(self.q_port) + "?setQueuedResponse=True&reqId=" + reqId
-        token = "afjas12eada23142dew"
-        headers = {'Authorization': f'Bearer {token}'}
+        headers = {'Authorization': f'Bearer {self.pollstate.api_key}'}
         requests.post(url, data=payload, headers=headers)

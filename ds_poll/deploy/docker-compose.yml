@@ -16,4 +16,19 @@ services:
             - ../../cert/ca_cert/ds_develop_ca.crt:/usr/local/share/ca-certificates/ds_develop_ca.crt
             - ..:/home/dspoll/ds_poll
         entrypoint: bash -c "tail -f /dev/null"
+    poll_server_2:
+        container_name: poll_server_2
+        build: ..
+        restart: unless-stopped
+        environment:
+            - POLL_QUEUE_SERVER=${POLL_QUEUE_SERVER}
+            - POLL_OPAL_SERVER=${POLL_OPAL_SERVER}
+            - POLL_THREADS=${POLL_THREADS}
+            - LOG_LEVEL=${LOG_LEVEL}
+            - OWN_CERT_CA=${OWN_CERT_CA}
+            - QUEUE_API_KEY=${QUEUE_API_KEY}
+        volumes:
+            - ../../cert/ca_cert/ds_develop_ca.crt:/usr/local/share/ca-certificates/ds_develop_ca.crt
+            - ..:/home/dspoll/ds_poll
+        entrypoint: bash -c "tail -f /dev/null"
 

@@ -85,7 +85,7 @@ class ProxyHandler(socketserver.StreamRequestHandler):
 
         queryParams = req.getQueryParams()
         req_url = urlparse(req.url)
-
+        
         if 'getQueuedRequest' in queryParams:
             self.getQueuedRequest(req)
         elif 'setQueuedResponse' in queryParams:
@@ -96,11 +96,12 @@ class ProxyHandler(socketserver.StreamRequestHandler):
             self.ping()
         elif 'queueSizes' in queryParams:
             self.get_q_sizes()
-        elif 'qprequest' == req_url.path.split("/")[0]:
+        elif 'qprequest' == req_url.path.split("/")[1]:
             self.execQueueRequest(req)
         else:
             res = HTTPResponse('HTTP/1.1', 404, 'NOT FOUND')
             self.sendResponse(res.serialize())
+            return
 
     def execQueueRequest(self, req):
         site = self.extract_site_from_path(req)
@@ -214,7 +215,7 @@ class ProxyHandler(socketserver.StreamRequestHandler):
             res = HTTPResponse('HTTP/1.1', 503, 'Queue timed out - poll server did not respond in seconds ' + str(proxystate.responseTimeout)).serialize()
             self.sendResponse(res)
 
-        proxystate.log.debug("sending response with id %s back to client" % (reqId))
+        proxystate.log.debug(f'sending response with id {reqId} from site {site} back to client')
         self.sendResponse(res)
 
     @api_access
@@ -296,8 +297,15 @@ class ProxyState:
 
         # TODO - create queue per site
 
-        self.reqQueueList = {"erlangen": queue.Queue()}
-        self.resQueueList = {"erlangen": {}}
+        self.reqQueueList = {}
+        self.resQueueList = {}
+
+        with open('api-tokens.json') as json_file:
+            self.api_keys = json.load(json_file)
+
+        for site in self.api_keys.values():
+            self.reqQueueList[site] = queue.Queue()
+            self.resQueueList[site] = {}
         self.responseTimeout = None
         self.requestTimeout = None
         self.allowed_ips = None
