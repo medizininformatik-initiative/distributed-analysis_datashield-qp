@@ -29,8 +29,8 @@ def show_help():
 Syntax: python %s <options>
  -h                show this help screen
  -p                protocol
- -q <host:[port]>  full address of queue (default = 8)
- -o <host:[port]>  full address of opal server
+ -q <protocol://host:port>  full address of queue (default = 8)
+ -o <protocol://host:port>  full address of opal server
  -l <loglevel number> 
  -t <number>       number of threads to create for polling
  -s                set ssl context to verify server side
@@ -58,25 +58,11 @@ def parse_options():
 
     # Check and parse queue host
     if 'q' in opts:
-        h = opts['q']
-        if ':' not in h:
-            p = 8001
-        else:
-            h, p = h.split(':')
-            p = int(p)
-        ps.q_addr = (h, p)
+        ps.q_addr = opts['q']
 
     # Check and parse redirection host
     if 'o' in opts:
-        h = opts['o']
-        if ':' not in h:
-            p = 8880
-        else:
-            h, p = h.split(':')
-            p = int(p)
-        ps.opal_addr = (h, p)
-
-    ps.https = True if 's' in opts else False
+        ps.o_addr = opts['o']
 
     ps.own_ca = True if 'c' in opts else False
 
@@ -88,19 +74,14 @@ def parse_options():
 
 
 def pollworker_req_handler(threadName, pollstate, req):
-    q_host, q_port = pollstate.q_addr
-    o_host, o_port = pollstate.opal_addr
 
-    pollworker = Pollworker(q_host, q_port, o_host, o_port, pollstate, threadName)
+    pollworker = Pollworker(pollstate, threadName)
     pollworker.handleRequest(req)
 
 
 def pollworker_exec(threadName, pollstate):
 
-    q_host, q_port = pollstate.q_addr
-    o_host, o_port = pollstate.opal_addr
-
-    pollworker = Pollworker(q_host, q_port, o_host, o_port, pollstate, threadName)
+    pollworker = Pollworker(pollstate, threadName)
 
     disconnected = True
     sleep_time = 10
@@ -110,8 +91,7 @@ def pollworker_exec(threadName, pollstate):
 
         if req is None:
             disconnected = True
-            pollstate.log.info("Could not connect to queue with address " + str(pollstate.q_addr[0]) + ":" + str(pollstate.q_addr[1]) + 
-                               " - sleep for " + str(sleep_time) + " seconds and try again")
+            pollstate.log.info(f"Could not connect to queue with address {pollstate.q_addr} - sleep for  {str(sleep_time)} seconds and try again")
 
             sleep_time = sleep_time * 2
 
@@ -125,14 +105,13 @@ def pollworker_exec(threadName, pollstate):
         if disconnected:
             disconnected = False
             sleep_time = 10
-            pollstate.log.info("Reconnected to queue with address " + str(pollstate.q_addr[0]) + ":" + str(pollstate.q_addr[1]) + 
-                               " - start processing requests")
+            pollstate.log.info(f"Reconnected to queue with address {pollstate.q_addr}- start processing requests")
 
         try:
             t = threading.Thread(target=pollworker_req_handler, daemon=True, args=("Thread-", pollstate, req))
             t.start()
         except Exception as e:
-            pollstate.log.error(e.__str__() + ": Error on starting response handler")
+            pollstate.log.error(f"{e.__str__()}: Error on starting response handler")
 
 
 def main():
@@ -151,7 +130,7 @@ def main():
             threads.append(t)
             t.start()
     except Exception as e:
-        pollstate.log.error(e.__str__() + ": Error on starting poll threads")
+        pollstate.log.error(f"{e.__str__()}: Error on starting poll threads")
     while threading.active_count() > 1:
         time.sleep(10)
         pass
