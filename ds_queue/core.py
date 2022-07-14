@@ -14,6 +14,7 @@ import ssl
 import uuid
 import os
 import json
+import ipaddress
 from ds_http.ds_http import HTTPRequest, HTTPResponse
 from logger import Logger
 
@@ -56,8 +57,8 @@ class ProxyHandler(socketserver.StreamRequestHandler):
         if len(orig_ip) > 0:
             orig_ip = orig_ip[0]
 
-        if proxystate.allowed_ips and orig_ip not in proxystate.allowed_ips:
-            print("rejecting ip : " + str(orig_ip))
+        if not proxystate.isIPAllowed(orig_ip):
+            proxystate.log.error("rejecting ip : " + str(orig_ip))
             return
 
         self.handleQpRequest(req)
@@ -229,3 +230,20 @@ class ProxyState:
             target = proxystate.redirect
 
         return target
+
+    def isIPAllowed(self, ip):
+        for allowed_ip in self.allowed_ips:
+            # Try as ip network
+            try:
+                if ipaddress.ip_address(ip) in ipaddress.ip_network(allowed_ip):
+                    return True
+            except ValueError:
+                # Try as ip address
+                try:
+                    if ipaddress.ip_address(ip) ==  ipaddress.ip_address(allowed_ip):
+                        return True
+                except ValueError:
+                        ## One value is not an IP address
+                        pass
+        # IP was neither found as an IP address nor in a network
+        return False
