@@ -1,0 +1,38 @@
+services:
+  opal:
+    image: ghcr.io/medizininformatik-initiative/distributed-analysis_datashield-qp/ds_opal:v0.0.1
+    restart: unless-stopped
+    ports:
+      - "8443:8443"
+      - 127.0.0.1:8880:8080
+    environment:
+      - OPAL_ADMINISTRATOR_PASSWORD=${OPAL_ADMIN_PASS}
+      - MONGODBHOST=${OPAL_MONGODB_HOST:-mongo}
+      - INITTESTDATA=${OPAL_INITTESTDATA:-true}
+      - DS_VERSION=${DS_VERSION:-6.1.1}
+      - DS_PRIVACY_LEVEL=${DS_PRIVACY_LEVEL:-5}
+      - ROCK_HOSTS=${OPAL_ROCKS_HOSTS:-rock1:8085,rock2:8085}
+      - JAVA_OPTS=-Xms1G -Xmx8G -XX:+UseG1GC
+    volumes:
+      - ./auth:/opt/opal/auth
+  mongo:
+    image: mongo
+    restart: unless-stopped
+    volumes:
+      - opal-db-data:/data/db
+  rock1:
+    image: datashield/rock-base:latest
+    restart: unless-stopped
+    environment:
+      - ROCK_ID=default-1
+      - ROCK_CLUSTER=default
+  rock2:
+    image: datashield/rock-base:latest
+    restart: unless-stopped
+    environment:
+      - ROCK_ID=default-2
+      - ROCK_CLUSTER=default
+
+volumes:
+  opal-db-data:
+  opal-files:

@@ -10,3 +10,5 @@ This is a repository which provides a combination of docker packaged components 
 ## Deployment
 
 Inside the deploy folder we provide the newest installation packages, which allow one to install the newest version of the DataSHIELD infrastructure.
+
+It also includes a README which explains the installation process.
