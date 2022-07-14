@@ -4,29 +4,41 @@ services:
   opal:
     container_name: datashield_opal
     restart: unless-stopped
-    image: docker.miracum.org/datashield_miracum/ds_opal:v0.10.1
+    image: docker.miracum.org/datashield_miracum/ds_opal:v0.12.1
     ports:
       - "443:8443"
     networks:
       - opal_net
     environment:
       - OPAL_ADMINISTRATOR_PASSWORD=${OPAL_ADMIN_PASS}
-      - RSERVER_PORT_6312_TCP_ADDR=${R_SERVER_HOST}
       - MONGODBHOST=${OPAL_MONGODB_HOST}
       - INITTESTDATA=true
-      - DS_VERSION=${DS_VERSION:-6.0.0}
+      - DS_VERSION=${DS_VERSION:-6.2.2}
       - DS_PRIVACY_LEVEL=$DS_PRIVACY_LEVEL
+      - ROCK_HOSTS=rock1:8085,rock2:8085
     volumes:
       - ${QP_DATA_DIR}/opal:/srv
       - /etc/dsqp/auth:/auth
       - /etc/dsqp/miracum_users:/miracum_users
 
-  rserver:
-    container_name: datashield_rserver
+  rock1:
     restart: unless-stopped
-    image: obiba/opal-rserver:1.6
+    image: datashield/rock-base:6.2
+    environment:
+      - ROCK_ID=default-1
+      - ROCK_CLUSTER=default
     networks:
       - opal_net
+
+  rock2:
+    image: datashield/rock-base:6.2
+    restart: unless-stopped
+    environment:
+      - ROCK_ID=default-2
+      - ROCK_CLUSTER=default
+    networks:
+      - opal_net
+
 
   mongo:
     container_name: datashield_mongo
