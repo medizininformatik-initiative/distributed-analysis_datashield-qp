@@ -1,3 +1,6 @@
+
+**This repository is DEPRECATED and currently not maintained**
+
 # mii-ds
 
 This is a repository which provides a combination of docker packaged components which are neccessary to run DataSHIELD and includes:
