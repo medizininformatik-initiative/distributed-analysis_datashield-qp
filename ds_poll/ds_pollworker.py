@@ -75,7 +75,7 @@ class Pollworker():
 
         if res.status_code != 200:
             self.pollstate.log.debug("Connected to queue, but error getting next request, check if your queue and nginx are running correctly," +
-                                     " response from queue: %s %s \n %s" % (str(res.code), res.msg))
+                                     " response from queue: %s %s \n" % (str(res.code), res.msg))
             return
 
         res_buf = io.BytesIO(res.content)
