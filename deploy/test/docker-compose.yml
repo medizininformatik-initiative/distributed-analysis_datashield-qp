@@ -1,0 +1,8 @@
+version: '3.2'
+services:
+  ds_test:
+    #image: TODO 
+    volumes:
+      - ./testscript:/testscript
+    environment:
+      - QUEUE_HOST=${QUEUE_HOST}

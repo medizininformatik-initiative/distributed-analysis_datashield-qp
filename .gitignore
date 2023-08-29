@@ -10,3 +10,4 @@ queue.config
 !/cert/do_cert/.gitkeep
 /cert/ca_cert/*
 !/cert/ca_cert/.gitkeep
+/deploy/*/.env

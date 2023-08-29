@@ -1,0 +1,7 @@
+services:
+  ds_simple_client:
+    image: # TODO
+    tty: true
+    volumes:
+      - ../cert/ca_cert/ds_develop_ca.crt:/usr/local/share/ca-certificates/ds_develop_ca.crt
+      - ./testscripts:/testscripts
